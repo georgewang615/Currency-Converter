@@ -1,0 +1,7 @@
+{
+  "rates": [
+    {"date":"2022-09-08","currencies":[{"name":"AUD","value":0.673},{"name":"USD","value":1.0}]},
+    {"date":"2022-09-09","currencies":[{"name":"AUD","value":0.999},{"name":"USD","value":1.01}]}
+  ],
+  "popular": ["AUD", "SGD", "USD", "EU"]
+}

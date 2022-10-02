@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="SOFT2412A1.AddCurrencyTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2022-09-20T13:21:19" hostname="Georges-MacPro" time="0.063">
+  <properties/>
+  <testcase name="testAddCurrencyExistingDate()" classname="SOFT2412A1.AddCurrencyTest" time="0.061"/>
+  <testcase name="testAddCurrencyNewDate()" classname="SOFT2412A1.AddCurrencyTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

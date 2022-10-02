@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExchangeBook.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">SOFT2412A1</a> &gt; <span class="el_source">ExchangeBook.java</span></div><h1>ExchangeBook.java</h1><pre class="source lang-java linenums">package SOFT2412A1;
+import java.text.*;
+import java.util.*;
+
+
+public class ExchangeBook {
+    private List&lt;DailyRates&gt; exchangeRates;
+    private List&lt;String&gt; popularCurrencies;
+
+<span class="fc" id="L10">    public ExchangeBook(List&lt;DailyRates&gt; rates, List&lt;String&gt; popularCurrencies) {</span>
+<span class="fc" id="L11">        this.exchangeRates = rates;</span>
+<span class="fc" id="L12">        this.popularCurrencies = popularCurrencies;</span>
+<span class="fc" id="L13">    }</span>
+
+    public void addDailyRates(DailyRates dr) {
+
+//        only have 1 entry per day
+//        if a new entry is added on the same day, then remove the previous entry
+<span class="fc" id="L19">        DailyRates ratesToRemove = null;</span>
+<span class="fc bfc" id="L20" title="All 2 branches covered.">        for (DailyRates dailyRates : this.exchangeRates) {</span>
+<span class="fc bfc" id="L21" title="All 2 branches covered.">            if (dailyRates.getDate().equals(dr.getDate())) {</span>
+<span class="fc" id="L22">                ratesToRemove = dailyRates;</span>
+            }
+<span class="fc" id="L24">        }</span>
+
+<span class="fc bfc" id="L26" title="All 2 branches covered.">        if (ratesToRemove != null) {</span>
+<span class="fc" id="L27">            this.exchangeRates.remove(ratesToRemove);</span>
+        }
+
+<span class="fc" id="L30">        this.exchangeRates.add(dr);</span>
+<span class="fc" id="L31">    }</span>
+
+    public void addCurrency(Currency currency) {
+<span class="fc" id="L34">        String currentDate = DateHandler.toString(DateHandler.getCurrentDate());</span>
+<span class="fc" id="L35">        List&lt;Currency&gt; currencyList = this.getDailyRates(currentDate).copyData();</span>
+<span class="fc" id="L36">        currencyList.add(currency);</span>
+<span class="fc" id="L37">        DailyRates newRates = new DailyRates(currentDate, currencyList);</span>
+<span class="fc" id="L38">        this.addDailyRates(newRates);</span>
+<span class="fc" id="L39">    }</span>
+
+    public List&lt;DailyRates&gt; getExchangeRates() {
+<span class="fc" id="L42">        Collections.sort(this.exchangeRates, new Comparator&lt;DailyRates&gt;() {</span>
+<span class="fc" id="L43">            DateFormat df = new SimpleDateFormat(&quot;yyyy-MM-dd&quot;);</span>
+            @Override
+            public int compare(DailyRates dr1, DailyRates dr2) {
+                try {
+<span class="fc" id="L47">                    return df.parse(dr2.getDate()).compareTo(df.parse(dr1.getDate()));</span>
+<span class="nc" id="L48">                } catch (Exception e) {</span>
+<span class="nc" id="L49">                    throw new IllegalArgumentException(e);</span>
+                }
+            }
+        });
+<span class="fc" id="L53">        return this.exchangeRates;</span>
+    }
+
+    public List&lt;String&gt; getPopularCurrencies() {
+<span class="fc" id="L57">        return this.popularCurrencies;</span>
+    }
+
+    public void setPopularCurrencies(List&lt;String&gt; popularCurrencies) {
+<span class="nc" id="L61">        this.popularCurrencies = popularCurrencies;</span>
+<span class="nc" id="L62">    }</span>
+
+    public DailyRates getIndex(int index) {
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        if (index &gt;= this.exchangeRates.size()) {</span>
+<span class="fc" id="L66">            return null;</span>
+        }
+
+<span class="fc" id="L69">        return getExchangeRates().get(index);</span>
+    }
+
+
+    // gets the list of currencies from the given date
+//    if there are no entries from the given date, then it returns the most recent entry before that date.
+//    if there are no entries at/before that date, then it returns null.
+    public DailyRates getDailyRates(String date) {
+<span class="fc" id="L77">        List&lt;DailyRates&gt; sortedRates = new ArrayList&lt;DailyRates&gt;(this.exchangeRates);</span>
+<span class="fc" id="L78">        sortedRates.sort(Comparator.comparing(DailyRates::getDate));</span>
+
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        for (int i = 0; i &lt; sortedRates.size(); i++) {</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">            if (sortedRates.get(i).getDate().compareTo(date) == 0) {</span>
+<span class="fc" id="L82">                return sortedRates.get(i);</span>
+
+<span class="fc bfc" id="L84" title="All 2 branches covered.">            } else if (sortedRates.get(i).getDate().compareTo(date) &gt; 0) {</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">                if (i == 0) {</span>
+<span class="fc" id="L86">                    return null;</span>
+                } else {
+<span class="nc" id="L88">                    return sortedRates.get(i-1);</span>
+                }
+            }
+        }
+
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">        if (sortedRates.get(sortedRates.size()-1).getDate().compareTo(date) &lt; 0) {</span>
+<span class="fc" id="L94">            return sortedRates.get(sortedRates.size()-1);</span>
+        }
+
+<span class="nc" id="L97">        return null;</span>
+    }
+
+    // gets the currency object with the given name, from the given date
+    public Currency getCurrency(String date, String name) {
+<span class="fc bfc" id="L102" title="All 2 branches covered.">        if (this.getDailyRates(date) == null) {</span>
+<span class="fc" id="L103">            return null;</span>
+        }
+
+<span class="fc bfc" id="L106" title="All 2 branches covered.">        for (Currency currency : this.getDailyRates(date).getData()) {</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">            if (currency.getName().equals(name)) {</span>
+<span class="fc" id="L108">                return currency;</span>
+            }
+<span class="fc" id="L110">        }</span>
+<span class="fc" id="L111">        return null;</span>
+    }
+
+    public String convertCurrency(Currency oldCurrency, Currency newCurrency, double amount) {
+
+<span class="fc" id="L116">        double rate = newCurrency.getValue() / oldCurrency.getValue();</span>
+<span class="fc" id="L117">        double newAmount = amount * rate;</span>
+<span class="fc" id="L118">        return String.format(&quot;%.2f in %s converts to %.2f in %s.&quot;,</span>
+<span class="fc" id="L119">                amount, oldCurrency.getName(), newAmount, newCurrency.getName());</span>
+    }
+
+    public String conversionRateSummary(Date startDate, Date endDate, Currency fromCurrency, Currency toCurrency) {
+<span class="nc" id="L123">        String summary = &quot;&quot;;</span>
+<span class="nc" id="L124">        summary += String.format(&quot;Comparing the exchange rates from %s to %s between %s and %s:\n\n&quot;,</span>
+<span class="nc" id="L125">            fromCurrency.getName(), toCurrency.getName(),</span>
+<span class="nc" id="L126">            DateHandler.toString(startDate), DateHandler.toString(endDate));</span>
+
+<span class="nc" id="L128">        Date movingDate = startDate;</span>
+<span class="nc" id="L129">        List&lt;Double&gt; exchangeRates = new ArrayList&lt;&gt;();</span>
+
+<span class="nc bnc" id="L131" title="All 2 branches missed.">        while (movingDate.compareTo(endDate) != 1) {</span>
+<span class="nc" id="L132">            String currentDateString = DateHandler.toString(movingDate);</span>
+
+<span class="nc" id="L134">            Currency currentCurrency1 = this.getCurrency(currentDateString, fromCurrency.getName());</span>
+<span class="nc" id="L135">            Currency currentCurrency2 = this.getCurrency(currentDateString, toCurrency.getName());</span>
+<span class="nc" id="L136">            double currentExchangeRate = currentCurrency1.exchangeRate(currentCurrency2);</span>
+
+<span class="nc" id="L138">            summary += String.format(&quot;%s: %.2f\n&quot;, currentDateString, currentExchangeRate);</span>
+<span class="nc" id="L139">            exchangeRates.add(currentExchangeRate);</span>
+
+<span class="nc" id="L141">            movingDate = DateHandler.getNextDate(movingDate);</span>
+<span class="nc" id="L142">        }</span>
+
+<span class="nc" id="L144">        summary += &quot;\n&quot;;</span>
+<span class="nc" id="L145">        summary += String.format(&quot;Min: %.2f\n&quot;, RateSummary.min(exchangeRates));</span>
+<span class="nc" id="L146">        summary += String.format(&quot;Max: %.2f\n&quot;, RateSummary.max(exchangeRates));</span>
+<span class="nc" id="L147">        summary += String.format(&quot;Mean: %.2f\n&quot;, RateSummary.mean(exchangeRates));</span>
+<span class="nc" id="L148">        summary += String.format(&quot;Standard deviation: %.2f\n&quot;, RateSummary.sd(exchangeRates));</span>
+
+<span class="nc" id="L150">        return summary;</span>
+    }
+
+    @Override
+    public boolean equals(Object other) {
+<span class="fc" id="L155">        return this.getExchangeRates().equals(other);</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L160">        String result = &quot;&quot;;</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">        for (DailyRates dailyRates : this.exchangeRates) {</span>
+<span class="fc" id="L162">            result = result.concat(String.format(&quot;%s\n&quot;, dailyRates.toString()));</span>
+<span class="fc" id="L163">        }</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">        for (String currency : this.popularCurrencies) {</span>
+<span class="fc" id="L165">            result = result.concat(String.format(&quot;%s\n&quot;, currency));</span>
+<span class="fc" id="L166">        }</span>
+
+<span class="fc" id="L168">        return result;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

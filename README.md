@@ -1,0 +1,1 @@
+Currency converter written in Java and built under Gradle.

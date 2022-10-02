@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FileHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">SOFT2412A1</a> &gt; <span class="el_source">FileHandler.java</span></div><h1>FileHandler.java</h1><pre class="source lang-java linenums">package SOFT2412A1;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.List;
+
+public class FileHandler {
+    private String fileName;
+
+<span class="fc" id="L15">    public FileHandler(String fileName) {</span>
+<span class="fc" id="L16">        this.fileName = fileName;</span>
+<span class="fc" id="L17">    }</span>
+
+    public ExchangeBook read() throws Exception {
+<span class="fc" id="L20">        List&lt;DailyRates&gt; rates = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L21">        List&lt;String&gt; popularCurrencies = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L22">        JSONParser parser = new JSONParser();</span>
+
+<span class="fc" id="L24">        JSONObject data = (JSONObject) parser.parse(new FileReader(this.fileName));</span>
+<span class="fc" id="L25">        JSONArray days = (JSONArray) data.get(&quot;rates&quot;);</span>
+<span class="fc" id="L26">        JSONArray popular = (JSONArray) data.get(&quot;popular&quot;);</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">        for (Object day : days) {</span>
+<span class="fc" id="L28">            JSONObject dayJSON = (JSONObject) day;</span>
+<span class="fc" id="L29">            List&lt;Currency&gt; currencies = parseCurrencies(dayJSON);</span>
+<span class="fc" id="L30">            DailyRates dr = new DailyRates(dayJSON.get(&quot;date&quot;).toString(), currencies);</span>
+<span class="fc" id="L31">            rates.add(dr);</span>
+<span class="fc" id="L32">        }</span>
+
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        for (Object popularCurrency : popular) {</span>
+<span class="fc" id="L35">            popularCurrencies.add((String) popularCurrency);</span>
+<span class="fc" id="L36">        }</span>
+
+<span class="fc" id="L38">        return new ExchangeBook(rates, popularCurrencies);</span>
+    }
+
+    public void write(ExchangeBook newBook) throws Exception {
+<span class="fc" id="L42">        FileWriter writer = new FileWriter(this.fileName);</span>
+<span class="fc" id="L43">        writer.write(convertToJSON(newBook).toJSONString());</span>
+<span class="fc" id="L44">        writer.close();</span>
+<span class="fc" id="L45">    }</span>
+
+    private static List&lt;Currency&gt; parseCurrencies(JSONObject day) {
+<span class="fc" id="L48">        List&lt;Currency&gt; currencies = new ArrayList&lt;Currency&gt;();</span>
+<span class="fc" id="L49">        JSONArray currencyListJSON = (JSONArray) day.get(&quot;currencies&quot;);</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        for (Object currency : currencyListJSON) {</span>
+<span class="fc" id="L51">            JSONObject currencyJSON = (JSONObject) currency;</span>
+<span class="fc" id="L52">            currencies.add(new Currency(</span>
+<span class="fc" id="L53">                currencyJSON.get(&quot;name&quot;).toString(),</span>
+<span class="fc" id="L54">                Double.parseDouble(currencyJSON.get(&quot;value&quot;).toString())));</span>
+<span class="fc" id="L55">        }</span>
+
+<span class="fc" id="L57">        return currencies;</span>
+    }
+
+    private static JSONObject convertToJSON(ExchangeBook eb) {
+<span class="fc" id="L61">        JSONObject dataJSON = new JSONObject();</span>
+<span class="fc" id="L62">        JSONArray ratesJSON = new JSONArray();</span>
+<span class="fc" id="L63">        JSONArray popularJSON = new JSONArray();</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        for (String name : eb.getPopularCurrencies()) {</span>
+<span class="fc" id="L65">            popularJSON.add(name);</span>
+<span class="fc" id="L66">        }</span>
+
+<span class="fc bfc" id="L68" title="All 2 branches covered.">        for (DailyRates dr : eb.getExchangeRates()) {</span>
+<span class="fc" id="L69">            JSONObject day = new JSONObject();</span>
+<span class="fc" id="L70">            JSONArray currenciesJSON = new JSONArray();</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">            for (Currency c : dr.getData()) {</span>
+<span class="fc" id="L72">                JSONObject currencyJSON = new JSONObject();</span>
+<span class="fc" id="L73">                currencyJSON.put(&quot;name&quot;, c.getName());</span>
+<span class="fc" id="L74">                currencyJSON.put(&quot;value&quot;, c.getValue());</span>
+<span class="fc" id="L75">                currenciesJSON.add(currencyJSON);</span>
+<span class="fc" id="L76">            }</span>
+
+<span class="fc" id="L78">            day.put(&quot;date&quot;, dr.getDate());</span>
+<span class="fc" id="L79">            day.put(&quot;currencies&quot;, currenciesJSON);</span>
+<span class="fc" id="L80">            ratesJSON.add(day);</span>
+<span class="fc" id="L81">        }</span>
+
+<span class="fc" id="L83">        dataJSON.put(&quot;rates&quot;, ratesJSON);</span>
+<span class="fc" id="L84">        dataJSON.put(&quot;popular&quot;, popularJSON);</span>
+<span class="fc" id="L85">        return dataJSON;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

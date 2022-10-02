@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="SOFT2412A1.ExchangeBookTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2022-09-20T13:21:19" hostname="Georges-MacPro" time="0.01">
+  <properties/>
+  <testcase name="equalSimple()" classname="SOFT2412A1.ExchangeBookTest" time="0.0"/>
+  <testcase name="getCurrencyNull()" classname="SOFT2412A1.ExchangeBookTest" time="0.001"/>
+  <testcase name="toStringSimple()" classname="SOFT2412A1.ExchangeBookTest" time="0.001"/>
+  <testcase name="getCurrencySimple()" classname="SOFT2412A1.ExchangeBookTest" time="0.001"/>
+  <testcase name="convertCurrencySimple()" classname="SOFT2412A1.ExchangeBookTest" time="0.002"/>
+  <testcase name="getDailyRates()" classname="SOFT2412A1.ExchangeBookTest" time="0.002"/>
+  <testcase name="getIndex()" classname="SOFT2412A1.ExchangeBookTest" time="0.001"/>
+  <testcase name="getDailyRatesSimple()" classname="SOFT2412A1.ExchangeBookTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
